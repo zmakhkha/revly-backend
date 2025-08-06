@@ -4,13 +4,14 @@ from typing import Optional, List
 from datetime import datetime
 
 class VendorOut(BaseModel):
-    name: str
-    longitude: str 
-    latitude: str 
+    vendor_name: str
+    longitude: float 
+    latitude: float   
     chain_id: Optional[int]
-    vendor_id: int
+    vendor_id: int 
     chain_name: Optional[str]
     created_at: datetime
+
 
 
 class VendorTag(BaseModel):

@@ -8,27 +8,30 @@ from sqlalchemy.orm import Session
 from schemas import UserOut, VendorTag, VendorOut, UserIn
 
 @server.get('/vendors')
-def get_vendors(db:Session = Depends(get_session)):
-	vendors = db.query(
-		Vendor.name.label("vendor_name"),
-		Vendor.longitude,
-		Vendor.latitude,
-		Vendor.chain_id,
-		Chain.name.label("chain_name"),
-		Vendor.created_at
-	).join(
-		Chain, Vendor.chain_id == Chain.chain_id
-	).all()
-	
-	results = [VendorOut(
-		name= v.vendor_name,
-		longitude= v.longitude,
-		latitude= v.latitude,
-		chain_id= v.chain_id,
-		chain_name= v.chain_name,
-		created_at= v.created_at
-	) for v in vendors]
-	return results
+def get_vendors(db: Session = Depends(get_session)):
+    vendors = db.query(
+        Vendor.vendor_id,                        
+        Vendor.name.label("vendor_name"),
+        Vendor.longitude,
+        Vendor.latitude,
+        Vendor.chain_id,
+        Chain.name.label("chain_name"),
+        Vendor.created_at
+    ).join(
+        Chain, Vendor.chain_id == Chain.chain_id
+    ).all()
+
+    results = [VendorOut(
+        vendor_id=v.vendor_id,                     
+        vendor_name=v.vendor_name,
+        longitude=v.longitude,
+        latitude=v.latitude,
+        chain_id=v.chain_id,
+        chain_name=v.chain_name,
+        created_at=v.created_at
+    ) for v in vendors]
+
+    return results
 
 @server.get("/users")
 def get_users(db:Session= Depends(get_session)):
