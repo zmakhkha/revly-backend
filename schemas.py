@@ -14,24 +14,24 @@ class VendorOut(BaseModel):
 
 
 class VendorTag(BaseModel):
-    id: int
-    display_name: str
+    vendor_id: int
+    vendor_name: str
 
     class Config:
         orm_mode = True
 
 class UserOut(BaseModel):
-    # user_id: int
+    user_id: int
     email: str
     display_name: str
     is_active: bool
     created_at: datetime
-    list_vendors: List[VendorTag]
+    vendors: List[VendorTag]
     
     class Config:
         orm_mode = True
 
 class UserIn(BaseModel):
-    email: str
-    display_name: str
-    
+    # email: str
+    # display_name: str
+    is_active: bool

@@ -39,16 +39,17 @@ def get_users(db:Session= Depends(get_session)):
 		list_vendors_per_user = db.query(UsersVendors).filter_by(user_id=user.user_id)
 
 		vendors = [VendorTag(
-			id= v.vendor_id,
-			display_name= v.display_name,
+			vendor_id= v.vendor_id,
+			vendor_name= v.display_name,
 		) for v in list_vendors_per_user]
 		
 		results.append(UserOut(
+			user_id=user.user_id,
 			email= user.email,
 			display_name= user.display_name,
 			is_active= user.is_active,
 			created_at= user.created_at,
-			list_vendors= vendors
+			vendors= vendors
 		))
 	return results
 
@@ -69,15 +70,14 @@ def modify_user(id:int, user:UserIn, db:Session=Depends(get_session)):
 	selected_user = db.query(User).filter_by(user_id=id).first()
 	if selected_user is None:
 		raise HTTPException(status_code=404, detail="USer Not Found !!")
-	selected_user.email = user.email
-	selected_user.display_name = user.display_name
+	
+	# selected_user.email = user.email
+	# selected_user.display_name = user.display_name
+	selected_user.is_active = user.is_active
 	db.commit()
 	db.refresh(selected_user)
 
-	return UserIn(
-		email = selected_user.email,
-		display_name= selected_user.display_name
-	)
+	return {"message": "User updated successfully"}
 
 @server.delete("/users/{id}")
 def modify_user(id:int, db:Session=Depends(get_session)):
