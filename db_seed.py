@@ -1,13 +1,13 @@
 import csv
 from datetime import datetime
-from database import SessionLocal, engine
-from models import Base, Chain, User, Vendor, UsersVendors
+from db_config import SessionLocal, engine
+from db_models import Base, Chain, User, Vendor, UsersVendors
 
 Base.metadata.create_all(bind=engine)
 db = SessionLocal()
 
 # Insert Chains
-with open("chains.csv", newline="") as f:
+with open("data/chains.csv", newline="") as f:
     reader = csv.DictReader(f, delimiter=",")
     print("Inserting chains...")
     print(reader.fieldnames)
@@ -20,7 +20,7 @@ with open("chains.csv", newline="") as f:
         ))
 
 # Insert Users
-with open("users.csv", newline="") as f:
+with open("data/users.csv", newline="") as f:
     reader = csv.DictReader(f, delimiter=",")
     for row in reader:
         db.add(User(
@@ -32,7 +32,7 @@ with open("users.csv", newline="") as f:
         ))
 
 # Insert Vendors
-with open("vendors.csv", newline="") as f:
+with open("data/vendors.csv", newline="") as f:
     reader = csv.DictReader(f, delimiter=",")
     for row in reader:
         db.add(Vendor(
@@ -45,7 +45,7 @@ with open("vendors.csv", newline="") as f:
         ))
 
 # Insert users_vendors
-with open("users_vendors.csv", newline="") as f:
+with open("data/users_vendors.csv", newline="") as f:
     reader = csv.DictReader(f, delimiter=",")
     for row in reader:
         db.add(UsersVendors(
