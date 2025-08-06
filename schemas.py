@@ -30,3 +30,8 @@ class UserOut(BaseModel):
     
     class Config:
         orm_mode = True
+
+class UserIn(BaseModel):
+    email: str
+    display_name: str
+    

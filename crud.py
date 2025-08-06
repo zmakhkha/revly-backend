@@ -1,10 +1,11 @@
+from datetime import datetime
+from db_models import Vendor, Chain, User, UsersVendors
+from db_config import get_session
+from fastapi import Depends, HTTPException
+from fastapi.responses import JSONResponse
 from main import server
 from sqlalchemy.orm import Session
-from typing import List
-from db_config import get_session
-from fastapi import Depends
-from db_models import Vendor, Chain, User, UsersVendors
-from schemas import UserOut, VendorTag, VendorOut
+from schemas import UserOut, VendorTag, VendorOut, UserIn
 
 @server.get('/vendors')
 def get_vendors(db:Session = Depends(get_session)):
@@ -50,3 +51,41 @@ def get_users(db:Session= Depends(get_session)):
 			list_vendors= vendors
 		))
 	return results
+
+@server.post("/users")
+def post_user(user: UserIn, db:Session = Depends(get_session)):
+	db_user = User(
+		email = user.email,
+		display_name = user.display_name,
+		created_at = datetime.now(),
+		is_active = False
+	)
+	db.add(db_user)
+	db.commit()
+	return user
+
+@server.put("/users/{id}")
+def modify_user(id:int, user:UserIn, db:Session=Depends(get_session)):
+	selected_user = db.query(User).filter_by(user_id=id).first()
+	if selected_user is None:
+		raise HTTPException(status_code=404, detail="USer Not Found !!")
+	selected_user.email = user.email
+	selected_user.display_name = user.display_name
+	db.commit()
+	db.refresh(selected_user)
+
+	return UserIn(
+		email = selected_user.email,
+		display_name= selected_user.display_name
+	)
+
+@server.delete("/users/{id}")
+def modify_user(id:int, db:Session=Depends(get_session)):
+	selected_user = db.query(User).filter_by(user_id=id).first()
+	if selected_user is None:
+		raise HTTPException(status_code=404, detail="USer Not Found !!")
+	db.delete(selected_user)
+	db.commit()
+
+	return JSONResponse( status_code=200, content={"details": "User deleted successfully!"}
+    )
